@@ -10,8 +10,8 @@ import outgoing
 import incoming
 
 
-def configure_logging(loglevel):
-    numeric_level = getattr(logging, loglevel.upper(), None)
+def configure_logging(log_level):
+    numeric_level = getattr(logging, log_level.upper(), None)
     logging.basicConfig(format='%(asctime)s %(levelname)s - %(message)s', level=numeric_level)
 
 
@@ -38,11 +38,12 @@ def run(arguments):
 
 def usage():
     return """
-bm-email-client [options]
+
+    bmwrapper [options]
 
     EXAMPLES
-    bm-email-client -l info -p 12344 -s 12345
-    bm-email-client --log-level info --pop-port 12344 --smtp-port 12345
+    bmwrapper -l info -p 12344 -s 12345
+    bmwrapper --log-level info --pop-port 12344 --smtp-port 12345
 
     OPTIONS
     -l, --log-level <level>
@@ -56,27 +57,61 @@ bm-email-client [options]
 """
 
 
+def arg_to_key(arg):
+    """
+    Convert a long-form command line switch to an equivalent dict key,
+    Example: arg_to_key('--super-flag') == 'super_flag'
+    """
+    return arg.lstrip('-').replace('-', '_')
+
+
 def configure_parser(parser):
-    return parser;
+    defaults = {
+        'bm_host': '',
+        'bm_pass': '',
+        'bm_port': 8442,
+        'bm_user': '',
+        'log_level': 'info',
+        'pop_host': '127.0.0.1',
+        'pop_port': 12344,
+        'smtp_host': '127.0.0.1',
+        'smtp_port': 12345
+    }
+
+    plain_args = (
+        ('--bm-host',),
+        ('--bm-pass',),
+        ('--bm-user',),
+        ('--log-level', '-l'),
+        ('--smtp-host',),
+        ('--pop-host',),
+    )
+    for switches in plain_args:
+        key = arg_to_key(switches[0])
+        parser.add_argument(*switches, default=defaults[key])
+
+    int_args = (
+        ('--bm-port',),
+        ('--pop-port', '-p'),
+        ('--smtp-port', '-s'),
+    )
+    for switches in int_args:
+        key = arg_to_key(switches[0])
+        parser.add_argument(*switches, type=int, default=defaults[key])
+
+    return parser
 
 
 def main():
     parser = configure_parser(argparse.ArgumentParser(
-        description='BM-email-client',
+        description='bmwrapper',
         usage=usage(),
         add_help=False
     ))
-
     arguments = parser.parse_args()
-    arguments.loglevel = 'debug'
-    arguments.smtp_host = 'localhost'
-    arguments.smtp_port = 12345
-    arguments.pop_host = 'localhost'
-    arguments.pop_port = 12344
 
-    configure_logging(arguments.loglevel)
+    configure_logging(arguments.log_level)
     run(arguments)
-
 
 if __name__ == '__main__':
     main()

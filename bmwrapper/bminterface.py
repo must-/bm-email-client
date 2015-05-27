@@ -63,7 +63,7 @@ def _stripAddress(address):
           address = address[1:]
       else:
         address = address[1:]
-    logging.info("converted address " + orig + " to " + retstring)
+    logging.info("Converted address " + orig + " to " + retstring)
     return retstring
 
 def registerAddress(address):
@@ -87,7 +87,7 @@ def _getAll():
     if not allMessages:
       api = _makeApi(_getKeyLocation())
       allMessages = json.loads(api.getAllInboxMessages())
-    logging.debug("current filtering address is %s" % currentAddress)
+    logging.debug("Current filtering address is %s" % currentAddress)
     if currentAddress is not None:
         ret = []
         for msg in allMessages['inboxMessages']:
