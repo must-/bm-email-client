@@ -1,0 +1,5 @@
+daemon = true
+apienabled = true
+apiport = 8442
+apiinterface = 127.0.0.1
+apiusername = bm-email-client
