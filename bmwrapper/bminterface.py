@@ -1,4 +1,5 @@
 import ConfigParser
+import base64
 import xmlrpclib
 import json
 import datetime
@@ -86,7 +87,7 @@ def _getAll():
     if not allMessages:
       api = _makeApi(_getKeyLocation())
       allMessages = json.loads(api.getAllInboxMessages())
-    logging.debug("current address is %s" % currentAddress)
+    logging.debug("current filtering address is %s" % currentAddress)
     if currentAddress is not None:
         ret = []
         for msg in allMessages['inboxMessages']:
@@ -147,6 +148,25 @@ def getUIDLforSingle(msgID):
     inboxMessages = json.loads(api.getAllInboxMessages())
     msgRef = inboxMessages['inboxMessages'][msgID]['msgid'] #gets the message Ref via the message index number
     return [str(msgRef)]
+
+
+def list_my_addresses():
+    api = _makeApi(_getKeyLocation())
+    my_addresses = json.loads(api.listAddresses2())[u'addresses']
+    for address in my_addresses:
+        address[u'label'] = base64.b64decode(address[u'label'])
+    return my_addresses
+
+
+def create_random_address(label):
+    label_base64 = base64.b64encode(label)
+    eighteen_byte_ripe = True
+    total_difficulty = 1
+    small_message_difficulty = 1
+
+    api = _makeApi(_getKeyLocation())
+    address = api.createRandomAddress(label_base64, eighteen_byte_ripe, total_difficulty, small_message_difficulty)
+    return address
 
 ##############################################################################
 

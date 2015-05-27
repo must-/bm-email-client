@@ -8,10 +8,25 @@ import bminterface
 
 
 class outgoingServer(SMTPServer):
+    addresslabel = u'bm-email-client'
+
     def __init__(self, address, other_arg):
         SMTPServer.__init__(self, address, other_arg)  # Why are we using old-style classes
-        bminterface.listMsgs()
-        logging.info("SMTP: Bitmessage up and running")
+        addresses = bminterface.list_my_addresses()
+        logging.debug("Address list: {0}".format(addresses))
+
+        if not addresses:
+            logging.debug("No send addresses found. Creating a random address..")
+            address = bminterface.create_random_address(outgoingServer.addresslabel)
+        else:
+            addresses_with_label = [address for address in addresses if address[u'label'] == outgoingServer.addresslabel]
+            if len(addresses_with_label) >= 1:
+                address = addresses_with_label[0][u'address']
+            else:
+                logging.info("Label {0} not found in Bitmessage addresses.".format(outgoingServer.addresslabel))
+                address = addresses[0][u'address']
+
+        logging.info("SMTP: Bitmessage up and running. First BM-address: {0}".format(address))
 
     def process_message(self, peer, mailfrom, rcpttos, data):
         parser = email.parser.FeedParser()
@@ -37,7 +52,7 @@ class outgoingServer(SMTPServer):
         return 0
     
     def _bmformat(self, msg):
-      disclaimer = "\n<!-- Email sent from bmwrapper -->\n<!-- https://github.com/Arceliar/bmwrapper -->\n"
+      disclaimer = "\n<!-- Email sent from bm-email-client -->\n<!-- Thank Arceliar for https://github.com/Arceliar/bmwrapper -->\n"
       imageNotice = "<!-- Note: An image is attached below -->\n"
       if not msg.is_multipart():
         #This is a single part message, so there's nothing to do.

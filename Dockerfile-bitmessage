@@ -1,0 +1,26 @@
+FROM ubuntu:14.04 # TODO use a smaller base image
+
+RUN locale-gen --no-purge en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+RUN update-locale
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN add-apt-repository ppa:fuzzgun/pybitmessage
+RUN apt-get -y update
+RUN apt-get -y upgrade
+
+RUN apt-get install pybitmessage
+
+ENV bm_api_username bm-user
+ENV bm_api_password placeholder
+RUN echo "daemon = true\n"+\
+    "apienabled = true\n"+\
+    "apiinterface = 127.0.0.1\n"+\
+    "apiport = 8442\n"+\
+    "apiusername = $bm_api_username\n"+\
+    "apipassword = $bm_api_password\n"\
+    >>  ~/.config/PyBitmessage/keys.dat
+
+RUN pybitmessage

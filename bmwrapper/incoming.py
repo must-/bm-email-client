@@ -242,7 +242,8 @@ def incomingServer(host, port, run_event):
 
 def incomingServer_main(host, port, run_event):
     bminterface.listMsgs()
-    logging.info("POP: Bitmessage up and running")
+    address = bminterface.currentAddress
+    logging.info("POP: Bitmessage up and running. Using address {0}.".format(address))
 
     sock = None
     try:
