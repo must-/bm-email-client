@@ -191,11 +191,10 @@ def apiData():
             print ' '
             print '******************************************************************'
             print 'There was a problem trying to access the Bitmessage keys.dat file.'
-            print 'Make sure that daemon is in the same directory as Bitmessage.'
             print '******************************************************************'
             print ' '
-            print config
-            print ' '
+            print 'looking for {0} \n'.format(keysPath)
+            print '{0}\n'.format(config)
 
     try:
         apiConfigured = config.getboolean('bitmessagesettings','apienabled') #Look for 'apienabled'

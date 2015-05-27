@@ -241,6 +241,9 @@ def incomingServer(host, port, run_event):
     return popthread
 
 def incomingServer_main(host, port, run_event):
+    bminterface.listMsgs()
+    logging.info("POP: Bitmessage up and running")
+
     sock = None
     try:
         while run_event.is_set():

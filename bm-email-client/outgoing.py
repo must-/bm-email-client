@@ -8,6 +8,11 @@ import bminterface
 
 
 class outgoingServer(SMTPServer):
+    def __init__(self, address, other_arg):
+        SMTPServer.__init__(self, address, other_arg)  # Why are we using old-style classes
+        bminterface.listMsgs()
+        logging.info("SMTP: Bitmessage up and running")
+
     def process_message(self, peer, mailfrom, rcpttos, data):
         parser = email.parser.FeedParser()
         parser.feed(data)
