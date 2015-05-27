@@ -4,10 +4,11 @@ import email.mime.text
 import email.mime.image
 import email.mime.multipart
 import email.header
-import bminterface
 import re
 import select
 import logging
+
+import bminterface
 
 
 class ChatterboxConnection(object):

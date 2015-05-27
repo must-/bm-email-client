@@ -1,8 +1,11 @@
 import asyncore
 from smtpd import SMTPServer
-import email.parser, email.header
-import bminterface
+import email.parser
+import email.header
 import logging
+
+import bminterface
+
 
 class outgoingServer(SMTPServer):
     def process_message(self, peer, mailfrom, rcpttos, data):
@@ -58,7 +61,7 @@ class outgoingServer(SMTPServer):
               imagedata += line
           image += '<img '+name+' src="data:'+filetype+'base64,'+imagedata+'" />'
         elif 'multipart' in item['Content-Type']:
-          firstTest_new, text_new, image_new = self._recurseParse(item)
+          firstText_new, text_new, image_new = self._recurseParse(item)
           text += firstText_new + text_new
           image += image_new
         else:

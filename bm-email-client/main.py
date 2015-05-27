@@ -1,11 +1,13 @@
 #!/usr/bin/python2.7
 
-import outgoing
-import incoming
 import asyncore
 import threading
 import sys
 import logging
+
+import outgoing
+import incoming
+
 
 def run():
     logging.basicConfig(format='%(asctime)s %(levelname)s - %(message)s', level=logging.DEBUG)
