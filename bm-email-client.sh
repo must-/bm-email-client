@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-python -m bm-email-client "$@" &
+python2 -m bm-email-client "$@" &
