@@ -19,10 +19,10 @@ def run(arguments):
     run_event = threading.Event()
     run_event.set()
     logging.info("Starting SMTP server at {0}:{1}".format(arguments.smtp_host, arguments.smtp_port))
-    outserv = outgoing.outgoingServer((arguments.smtp_host, arguments.smtp_port), None)
+    outgoing.OutgoingServer((arguments.smtp_host, arguments.smtp_port), None)
 
     logging.info("Starting POP server at {0}:{1}".format(arguments.pop_host, arguments.pop_port))
-    inserv = incoming.incomingServer(arguments.pop_host, arguments.pop_port, run_event)
+    in_server = incoming.incomingServer(arguments.pop_host, arguments.pop_port, run_event)
 
     try:
         logging.info("Press Ctrl+C to exit.")
@@ -31,7 +31,7 @@ def run(arguments):
         logging.info("Exiting...")
         run_event.clear()
         logging.debug("waiting for threads...")
-        inserv.join()
+        in_server.join()
         logging.debug("all threads done...")
         sys.exit(0)
 

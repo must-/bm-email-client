@@ -158,39 +158,39 @@ def makeEmail(dateTime, toAddress, fromAddress, subject, body):
     body = parseBody(body)
     msgType = len(body)
     if msgType == 1:
-      msg = email.mime.text.MIMEText(body[0], 'plain', 'UTF-8')
+        msg = email.mime.text.MIMEText(body[0], 'plain', 'UTF-8')
     else:
-      msg = email.mime.multipart.MIMEMultipart('mixed')
-      bodyText = email.mime.text.MIMEText(body[0], 'plain', 'UTF-8')
-      body = body[1:]
-      msg.attach(bodyText)
-      for item in body:
-        img = 0
-        itemType, itemData = [0], [0]
-        try:
-          itemType, itemData = item.split(';', 1)
-          itemType = itemType.split('/', 1)
-        except:
-          logging.warning("Could not parse message type")
-          pass
-        if itemType[0] == 'image':
-          try:
-            itemDataFinal = itemData.lstrip('base64,').strip(' ').strip('\n').decode('base64')
-            img = email.mime.image.MIMEImage(itemDataFinal)
-          except:
-            #Some images don't auto-detect type correctly with email.mime.image
-            #Namely, jpegs with embeded color profiles look problematic
-            #Trying to set it manually...
+        msg = email.mime.multipart.MIMEMultipart('mixed')
+        bodyText = email.mime.text.MIMEText(body[0], 'plain', 'UTF-8')
+        body = body[1:]
+        msg.attach(bodyText)
+        for item in body:
+            img = 0
+            itemType, itemData = [0], [0]
             try:
-              itemDataFinal = itemData.lstrip('base64,').strip(' ').strip('\n').decode('base64')
-              img = email.mime.image.MIMEImage(itemDataFinal, _subtype=itemType[1])
+                itemType, itemData = item.split(';', 1)
+                itemType = itemType.split('/', 1)
             except:
-              logging.warning("Failed to parse image data. This could be an image.")
-              logging.warning("This could be from an image tag filled with junk data.")
-              logging.warning("It could also be a python email.mime.image problem.")
-          if img:
-            img.add_header('Content-Disposition', 'attachment')
-            msg.attach(img)
+                logging.warning("Could not parse message type")
+                pass
+            if itemType[0] == 'image':
+                try:
+                    itemDataFinal = itemData.lstrip('base64,').strip(' ').strip('\n').decode('base64')
+                    img = email.mime.image.MIMEImage(itemDataFinal)
+                except:
+                    # Some images don't auto-detect type correctly with email.mime.image
+                    #Namely, jpegs with embeded color profiles look problematic
+                    #Trying to set it manually...
+                    try:
+                        itemDataFinal = itemData.lstrip('base64,').strip(' ').strip('\n').decode('base64')
+                        img = email.mime.image.MIMEImage(itemDataFinal, _subtype=itemType[1])
+                    except:
+                        logging.warning("Failed to parse image data. This could be an image.")
+                        logging.warning("This could be from an image tag filled with junk data.")
+                        logging.warning("It could also be a python email.mime.image problem.")
+                    if img:
+                        img.add_header('Content-Disposition', 'attachment')
+                        msg.attach(img)
     msg['To'] = toAddress
     msg['From'] = fromAddress
     msg['Subject'] = email.header.Header(subject, 'UTF-8')
@@ -241,9 +241,7 @@ def incomingServer(host, port, run_event):
     return popthread
 
 def incomingServer_main(host, port, run_event):
-    bminterface.listMsgs()
-    address = bminterface.currentAddress
-    logging.info("POP: Bitmessage up and running. Using address {0}.".format(address))
+    logging.info("POP:  {0}".format(bminterface.client_status_summary()))
 
     sock = None
     try:
