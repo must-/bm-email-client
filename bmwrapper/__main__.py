@@ -72,9 +72,9 @@ def configure_parser(parser):
         'bm_port': 8442,
         'bm_user': '',
         'log_level': 'info',
-        'pop_host': '127.0.0.1',
+        'pop_host': '0.0.0.0',
         'pop_port': 12344,
-        'smtp_host': '127.0.0.1',
+        'smtp_host': '0.0.0.0',
         'smtp_port': 12345
     }
 

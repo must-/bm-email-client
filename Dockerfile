@@ -1,30 +1,30 @@
-FROM must/pybitmessage # TODO: split into two containers, connecting to API over tcp
+# TODO: split into two containers, connecting to API over tcp
+FROM must/pybitmessage
 
-RUN locale-gen --no-purge en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
-RUN update-locale
-ENV DEBIAN_FRONTEND noninteractive
+RUN locale-gen --no-purge en_US.UTF-8 && \
+    export LANG=en_US.UTF-8 && \
+    export LANGUAGE=en_US.UTF-8 && \
+    export LC_ALL=en_US.UTF-8 && \
+    dpkg-reconfigure --frontend=noninteractive locales
 
 RUN apt-get -y update
 RUN apt-get -y upgrade
 
-RUN git clone https://github.com/must-/bmwrapper.git
-CD bmwrapper
 ADD . /bmwrapper
-
-# forward logs to docker log collector
-RUN ln -sf /dev/stdout /var/log/bmwrapper.log
 
 ENV pop_port 12344
 ENV smtp_port 12345
 
-EXPOSE pop_port
-EXPOSE smtp_port
+EXPOSE $pop_port
+EXPOSE $smtp_port
 
 WORKDIR /bmwrapper
 
-CMD ["-l info"]
+# CMD ["bmwrapper.sh",">/var/log/bmwrapper.log","-l info"]
 
-ENTRYPOINT ["bash bmwrapper.sh >/var/log/bmwrapper.log "]
+ENV RUNSH_ARGS "-l debug"
+
+CMD python /PyBitmessage/src/bitmessagemain.py >> /var/log/pybitmessage2.log 2>&1 & $(sleep 5;/bmwrapper/bmwrapper.sh $RUNSH_ARGS)
+ENTRYPOINT []
+# ENTRYPOINT ["bash","bmwrapper.sh",">/var/log/bmwrapper.log"]
+
